@@ -197,3 +197,72 @@
 
 //   return { days, hours, minutes, seconds };
 // }
+// import 'flatpickr/dist/flatpickr.min.css';
+// const fetchUsersBtn = document.querySelector('.btn');
+// const userList = document.querySelector('.user-list');
+
+// fetchUsersBtn.addEventListener('click', () => {
+//   fetchUsers()
+//     .then(users => renderUserList(users))
+//     .catch(error => console.log(error));
+// });
+
+// function fetchUsers() {
+//   return fetch('https://jsonplaceholder.typicode.com/users').then(response => {
+//     if (!response.ok) {
+//       throw new Error(response.status);
+//     }
+//     return response.json();
+//   });
+// }
+
+// function renderUserList(users) {
+//   const markup = users
+//     .map(user => {
+//       return `<li>
+//           <p><b>Name</b>: ${user.name}</p>
+//           <p><b>Email</b>: ${user.email}</p>
+//           <p><b>Company</b>: ${user.company.name}</p>
+//         </li>`;
+//     })
+//     .join('');
+//   userList.innerHTML = markup;
+// }
+
+// fetch('https://pokeapi.co/api/v2/pokemon/2')
+//   .then(response => {
+//     return response.json();
+//   })
+//   .then(pokemon => {
+//     console.log(pokemon);
+//   });
+import API from '../js/api-servis';
+import 'flatpickr/dist/flatpickr.min.css';
+import pokemonCardTpl from '../templates/pokemon-card.hbs';
+import getRefs from '../js/refs';
+
+const refs = getRefs();
+
+refs.searchForm.addEventListener('submit', onSeach);
+
+function onSeach(ev) {
+  ev.preventDefault();
+
+  const form = ev.currentTarget;
+  const searchQuery = form.elements.query.value;
+
+  API.fetchPokemonId(searchQuery)
+    .then(renderPokemonCard)
+    .catch(onfetchError)
+
+    .finally(() => form.reset());
+}
+
+function renderPokemonCard(pokemon) {
+  const marcup = pokemonCardTpl(pokemon);
+  refs.cardConteiner.innerHTML = marcup;
+}
+
+function onfetchError() {
+  alert('Упс, щось пішло не так і ми не знайшли pokemon');
+}
